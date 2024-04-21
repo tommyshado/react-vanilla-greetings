@@ -3,25 +3,29 @@ import axios from "axios";
 import { SelectLanguage } from "./SelectLanguage";
 import { EnterName } from "./EnterName";
 import { UserGreeting } from "./UserGreeting";
+import { EnterGreeting } from "./EnterGreeting";
 
 export default function Greeting() {
   const [languages, setLanguages] = useState([]);
   const [languageValue, setLanguageValue] = useState("");
   const [usernameValue, setUsernameValue] = useState("");
   const [greeting, setGreeting] = useState("");
+  const [enteredLanguage, setEnteredLanguage] = useState("");
+  const [enteredGreeting, setEnteredGreeting] = useState("");
 
   // Retrieving languages from the API
-  useEffect(() => {
-    async function fetchLanguages() {
-      try {
-        const response = await axios.get(
-          "https://greetings-typescript-backend.onrender.com/api"
-        );
-        setLanguages(response.data);
-      } catch (error) {
-        console.log("Error while fetching languages", error);
-      }
+  async function fetchLanguages() {
+    try {
+      const response = await axios.get(
+        "https://greetings-typescript-backend.onrender.com/api"
+      );
+      setLanguages(response.data);
+    } catch (error) {
+      console.log("Error while fetching languages", error);
     }
+  }
+
+  useEffect(() => {
     fetchLanguages();
   }, []);
 
@@ -50,15 +54,45 @@ export default function Greeting() {
     }
   }
 
+  function languageHandler(event) {
+    setEnteredLanguage(event.target.value);
+  }
+
+  function greetingHandler(event) {
+    setEnteredGreeting(event.target.value);
+  }
+
+  async function onSubmitGreetingHandler(event) {
+    event.preventDefault();
+    try {
+      await axios.post(
+        "https://greetings-typescript-backend.onrender.com/api/addGreeting",
+        {
+          language: enteredLanguage,
+          greeting: enteredGreeting,
+        }
+      );
+      fetchLanguages();
+    } catch (error) {
+      console.log("Error while creating a language and a greeting", error);
+    }
+  }
+
   return (
-    <div>
-      <form onSubmit={onSubmitHandler}>
-        <EnterName onName={onUsernameHandler} />
-        <SelectLanguage languages={languages} onSelect={onLanguageHandler} />
-        <br />
-        <button type="submit">Add Greeting</button>
-        <UserGreeting greeting={greeting} />
-      </form>
-    </div>
+    <>
+      <EnterGreeting
+        onSubmitGreeting={onSubmitGreetingHandler}
+        enteredLanguage={languageHandler}
+        enteredGreeting={greetingHandler}
+      />
+      <div>
+        <form onSubmit={onSubmitHandler}>
+          <EnterName onName={onUsernameHandler} />
+          <SelectLanguage languages={languages} onSelect={onLanguageHandler} />
+          <button type="submit">Add Greeting</button>
+          <UserGreeting greeting={greeting} />
+        </form>
+      </div>
+    </>
   );
 }
