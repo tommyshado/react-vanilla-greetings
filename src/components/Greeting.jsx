@@ -13,7 +13,7 @@ export default function Greeting() {
   const [greeting, setGreeting] = useState("");
   const [enteredLanguage, setEnteredLanguage] = useState("");
   const [enteredGreeting, setEnteredGreeting] = useState("");
-  const [greetingsCounter, setGreetingsCounter] = useState("");
+  const [greetingsCounter, setGreetingsCounter] = useState(0);
 
   // Retrieving languages from the API
   async function fetchLanguages() {
