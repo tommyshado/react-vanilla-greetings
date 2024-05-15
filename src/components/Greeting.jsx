@@ -4,6 +4,7 @@ import { SelectLanguage } from "./SelectLanguage";
 import { EnterName } from "./EnterName";
 import { UserGreeting } from "./UserGreeting";
 import { EnterGreeting } from "./EnterGreeting";
+import { Counter } from "./Counter";
 
 export default function Greeting() {
   const [languages, setLanguages] = useState([]);
@@ -12,6 +13,7 @@ export default function Greeting() {
   const [greeting, setGreeting] = useState("");
   const [enteredLanguage, setEnteredLanguage] = useState("");
   const [enteredGreeting, setEnteredGreeting] = useState("");
+  const [greetingsCounter, setGreetingsCounter] = useState("");
 
   // Retrieving languages from the API
   async function fetchLanguages() {
@@ -49,6 +51,7 @@ export default function Greeting() {
         }
       );
       setGreeting(response.data);
+      await fetchGreetingsCounter();
     } catch (error) {
       console.log("Error while creating a greeting", error);
     }
@@ -72,11 +75,25 @@ export default function Greeting() {
           greeting: enteredGreeting,
         }
       );
-      fetchLanguages();
+      await fetchLanguages();
     } catch (error) {
       console.log("Error while creating a language and a greeting", error);
     }
   }
+
+  async function fetchGreetingsCounter() {
+    try {
+      const response = await axios.get(
+        "https://greetings-typescript-backend.onrender.com/api/counter"
+      );
+      setGreetingsCounter(Number(response.data));
+    } catch (error) {
+      console.log("Error while fetching languages", error);
+    }
+  }
+  useEffect(() => {
+    fetchGreetingsCounter();
+  }, []);
 
   return (
     <>
@@ -86,6 +103,7 @@ export default function Greeting() {
         enteredGreeting={greetingHandler}
       />
       <div>
+        <Counter counter={greetingsCounter} />
         <form onSubmit={onSubmitHandler}>
           <EnterName onName={onUsernameHandler} />
           <SelectLanguage languages={languages} onSelect={onLanguageHandler} />
