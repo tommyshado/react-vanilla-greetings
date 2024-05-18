@@ -13,9 +13,8 @@ export default function Greeting() {
   const [greeting, setGreeting] = useState("");
   const [enteredLanguage, setEnteredLanguage] = useState("");
   const [enteredGreeting, setEnteredGreeting] = useState("");
-  const [greetingsCounter, setGreetingsCounter] = useState(0);
+  const [greetingsCounter, setGreetingsCounter] = useState("");
 
-  // Retrieving languages from the API
   async function fetchLanguages() {
     try {
       const response = await axios.get(
@@ -26,7 +25,6 @@ export default function Greeting() {
       console.log("Error while fetching languages", error);
     }
   }
-
   useEffect(() => {
     fetchLanguages();
   }, []);
@@ -34,12 +32,10 @@ export default function Greeting() {
   function onUsernameHandler(event) {
     setUsernameValue(event.target.value);
   }
-
   function onLanguageHandler(event) {
     setLanguageValue(event.target.value);
   }
 
-  // Inserting username & language into the API
   async function onSubmitHandler(event) {
     event.preventDefault();
     try {
@@ -60,7 +56,6 @@ export default function Greeting() {
   function languageHandler(event) {
     setEnteredLanguage(event.target.value);
   }
-
   function greetingHandler(event) {
     setEnteredGreeting(event.target.value);
   }
@@ -86,7 +81,7 @@ export default function Greeting() {
       const response = await axios.get(
         "https://greetings-typescript-backend.onrender.com/api/counter"
       );
-      setGreetingsCounter(Number(response.data));
+      setGreetingsCounter(response.data);
     } catch (error) {
       console.log("Error while fetching languages", error);
     }
